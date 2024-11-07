@@ -1,8 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import * as React from "react";
 import Link from "next/link";
 import { Globe, Menu, User } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
+import { signOut } from "@/actions/auth";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,9 +20,31 @@ import {
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [user, setUser] = React.useState<any>(null);
+  const supabase = createClient();
+  const router = useRouter();
 
-  const toggleAuth = () => setIsAuthenticated(!isAuthenticated);
+  React.useEffect(() => {
+    const getUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+      console.log("USER===", user);
+    };
+
+    getUser();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [supabase]);
 
   return (
     <nav className="sticky top-0 z-50 border-border/40 bg-gradient-to-r from-background from-50% via-accent/5 to-primary/5 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -59,7 +85,7 @@ export default function Navbar() {
             >
               Contact
             </Link>
-            {isAuthenticated ? (
+            {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative">
@@ -68,17 +94,19 @@ export default function Navbar() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>Profile</DropdownMenuItem>
                   <DropdownMenuItem>Settings</DropdownMenuItem>
-                  <DropdownMenuItem onClick={toggleAuth}>
-                    Sign out
+                  <DropdownMenuItem asChild>
+                    <form action={signOut}>
+                      <button className="w-full text-left">Sign out</button>
+                    </form>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button onClick={toggleAuth}>Sign In</Button>
+              <Button onClick={() => router.push("/login")}>Sign In</Button>
             )}
           </div>
           <div className="-mr-2 flex md:hidden">
@@ -122,7 +150,7 @@ export default function Navbar() {
               Contact
             </Link>
           </div>
-          {isAuthenticated ? (
+          {user ? (
             <div className="pt-4 pb-3 border-t border-accent">
               <div className="flex items-center px-5">
                 <div className="flex-shrink-0">
@@ -152,7 +180,7 @@ export default function Navbar() {
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={toggleAuth}
+                  onClick={() => router.push("/login")}
                   className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
                 >
                   Sign out
@@ -161,7 +189,7 @@ export default function Navbar() {
             </div>
           ) : (
             <div className="px-2 pt-2 pb-3 border-t border-accent">
-              <Button onClick={toggleAuth} className="w-full">
+              <Button onClick={() => router.push("/login")} className="w-full">
                 Sign In
               </Button>
             </div>
