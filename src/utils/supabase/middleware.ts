@@ -48,6 +48,11 @@ export async function updateSession(request: NextRequest) {
   // Check if the path is an auth route (login/signup)
   const isAuthRoute = authRoutes.includes(path);
 
+  // If user is signed in and on the home page, redirect to dashboard
+  if (user && path === "/") {
+    return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, request.url));
+  }
+
   // If user is signed in and trying to access auth route,
   // redirect them to the default redirect path
   if (user && isAuthRoute) {

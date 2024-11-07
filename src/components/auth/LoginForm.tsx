@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signInWithGoogle, signInWithMagicLink } from "@/actions/auth";
+import { signInWithMagicLink } from "@/actions/auth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,23 +14,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FcGoogle } from "react-icons/fc";
 import { Mail } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showMagicLink, setShowMagicLink] = useState(false);
+  const supabase = createClient();
 
   const handleGoogleSignIn = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      await signInWithGoogle();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+        queryParams: {
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
+    });
   };
 
   const handleMagicLink = async (formData: FormData) => {

@@ -4,23 +4,6 @@ import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export async function signInWithGoogle() {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
-    },
-  });
-
-  if (error) {
-    return { error: error.message };
-  }
-
-  return { data };
-}
-
 export async function signInWithMagicLink(formData: FormData) {
   const supabase = await createClient();
   const email = formData.get("email") as string;
@@ -41,6 +24,9 @@ export async function signInWithMagicLink(formData: FormData) {
 
 export async function signOut() {
   const supabase = await createClient();
+  const user = await supabase.auth.getUser();
+
+  console.log("User is signing out", user);
   await supabase.auth.signOut();
   revalidatePath("/", "layout");
   redirect("/");
