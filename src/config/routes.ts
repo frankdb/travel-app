@@ -4,6 +4,7 @@ export const publicRoutes = [
   "/auth",
   "/auth/confirm",
   "/auth/callback",
+  "/onboarding",
 ];
 export const authRoutes = ["/login"];
 export const protectedRoutes = ["/dashboard", "/account"];
