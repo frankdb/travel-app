@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { MdOutlineHandshake } from "react-icons/md";
 import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
+import { Globe2 } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -9,11 +9,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center space-x-2">
-              <MdOutlineHandshake className="text-3xl" />
-              <span className="text-2xl font-bold">Hirepod</span>
+              <Globe2 className="text-3xl" />
+              <span className="text-2xl font-bold">NomadPortal</span>
             </Link>
             <p className="mt-2 text-sm">
-              Connecting Filipino talent with global opportunities.
+              Relocation and travel resources for nomads
             </p>
           </div>
           <div>
@@ -62,7 +62,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-primary-foreground/10 text-center text-sm">
-          <p>&copy; 2024 Hirepod. All rights reserved.</p>
+          <p>&copy; 2024 NomadPortal. All rights reserved.</p>
         </div>
       </div>
     </footer>

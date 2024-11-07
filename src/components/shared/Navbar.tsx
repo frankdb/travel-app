@@ -3,7 +3,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Globe, Menu, User } from "lucide-react";
+import { Globe2, Menu, User } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { signOut } from "@/actions/auth";
@@ -46,6 +46,34 @@ export default function Navbar() {
     };
   }, [supabase]);
 
+  const publicLinks = (
+    <>
+      <Link
+        href="/contact"
+        className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium"
+      >
+        Contact
+      </Link>
+    </>
+  );
+
+  const privateLinks = (
+    <>
+      <Link
+        href="/dashboard"
+        className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium"
+      >
+        Dashboard
+      </Link>
+      <Link
+        href="/account"
+        className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium"
+      >
+        Account
+      </Link>
+    </>
+  );
+
   return (
     <nav className="sticky top-0 z-50 border-border/40 bg-gradient-to-r from-background from-50% via-accent/5 to-primary/5 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -53,9 +81,9 @@ export default function Navbar() {
           <div className="flex-shrink-0">
             <Link href="/" className="text-2xl font-bold">
               <div className="flex flex-row items-center">
-                <Globe className="w-6 h-6 mr-2 text-primary" />
+                <Globe2 className="w-6 h-6 mr-2 text-primary" />
                 <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  Where I Go
+                  NomadPortal
                 </span>
               </div>
             </Link>
@@ -67,24 +95,7 @@ export default function Navbar() {
             >
               Home
             </Link>
-            <Link
-              href="/about"
-              className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium"
-            >
-              About
-            </Link>
-            <Link
-              href="/services"
-              className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Services
-            </Link>
-            <Link
-              href="/contact"
-              className="text-muted-foreground hover:text-primary px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Contact
-            </Link>
+            {user ? privateLinks : publicLinks}
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -96,8 +107,9 @@ export default function Navbar() {
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>Settings</DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/account">Account</Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <form action={signOut}>
                       <button className="w-full text-left">Sign out</button>
@@ -131,24 +143,31 @@ export default function Navbar() {
             >
               Home
             </Link>
-            <Link
-              href="/about"
-              className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium"
-            >
-              About
-            </Link>
-            <Link
-              href="/services"
-              className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Services
-            </Link>
-            <Link
-              href="/contact"
-              className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium"
-            >
-              Contact
-            </Link>
+            {user ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  href="/account"
+                  className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium"
+                >
+                  Account
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/contact"
+                  className="text-muted-foreground hover:text-primary block px-3 py-2 rounded-md text-base font-medium"
+                >
+                  Contact
+                </Link>
+              </>
+            )}
           </div>
           {user ? (
             <div className="pt-4 pb-3 border-t border-accent">
@@ -158,33 +177,20 @@ export default function Navbar() {
                 </div>
                 <div className="ml-3">
                   <div className="text-base font-medium text-foreground">
-                    User Name
-                  </div>
-                  <div className="text-sm font-medium text-muted-foreground">
-                    user@example.com
+                    {user.email}
                   </div>
                 </div>
               </div>
               <div className="mt-3 px-2 space-y-1">
-                <Button
-                  variant="ghost"
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
-                >
-                  Profile
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
-                >
-                  Settings
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => router.push("/login")}
-                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
-                >
-                  Sign out
-                </Button>
+                <form action={signOut}>
+                  <Button
+                    variant="ghost"
+                    type="submit"
+                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
+                  >
+                    Sign out
+                  </Button>
+                </form>
               </div>
             </div>
           ) : (
