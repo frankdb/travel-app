@@ -4,9 +4,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { Globe2, Menu, User } from "lucide-react";
-import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { signOut } from "@/actions/auth";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,31 +18,30 @@ import {
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const [user, setUser] = React.useState<any>(null);
-  const supabase = createClient();
+  const [user, setUser] = React.useState<any>(true);
   const router = useRouter();
 
-  React.useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
-      console.log("USER===", user);
-    };
+  // React.useEffect(() => {
+  //   const getUser = async () => {
+  //     const {
+  //       data: { user },
+  //     } = await supabase.auth.getUser();
+  //     setUser(user);
+  //     console.log("USER===", user);
+  //   };
 
-    getUser();
+  //   getUser();
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+  //   const {
+  //     data: { subscription },
+  //   } = supabase.auth.onAuthStateChange((_event, session) => {
+  //     setUser(session?.user ?? null);
+  //   });
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [supabase]);
+  //   return () => {
+  //     subscription.unsubscribe();
+  //   };
+  // }, [supabase]);
 
   const publicLinks = (
     <>
@@ -111,9 +108,9 @@ export default function Navbar() {
                     <Link href="/account">Account</Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <form action={signOut}>
-                      <button className="w-full text-left">Sign out</button>
-                    </form>
+                    {/* <form action={signOut}> */}
+                    <button className="w-full text-left">Sign out</button>
+                    {/* </form> */}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -182,15 +179,15 @@ export default function Navbar() {
                 </div>
               </div>
               <div className="mt-3 px-2 space-y-1">
-                <form action={signOut}>
-                  <Button
-                    variant="ghost"
-                    type="submit"
-                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
-                  >
-                    Sign out
-                  </Button>
-                </form>
+                {/* <form action={signOut}> */}
+                <Button
+                  variant="ghost"
+                  type="submit"
+                  className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-muted-foreground hover:text-foreground hover:bg-accent"
+                >
+                  Sign out
+                </Button>
+                {/* </form> */}
               </div>
             </div>
           ) : (
